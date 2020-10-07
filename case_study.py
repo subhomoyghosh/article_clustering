@@ -52,9 +52,9 @@ def trimLinks(basepath,fname,website,IsEndWithNumber,keywords):
 ###### GET URL
 ######################
 
-## basepath
-basepath='/Users/subhomoyghosh/Documents/MIT_datascience/case_study_04/'
-final_outpath='/Users/subhomoyghosh/Documents/MIT_datascience/case_study_04/data/'
+## basepaths
+basepath='your_path/'
+final_outpath='your_path/data/'
 
 ## website links to get links from
 weblinks=['https://www.theguardian.com/world/2020/oct/06/all',
