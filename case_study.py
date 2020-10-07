@@ -6,6 +6,7 @@
 
 import os
 from htmldate import find_date
+import sys
 
 ######################################
 ## FUNCTION TO TRIM LINKS
@@ -46,7 +47,8 @@ final_outpath='your_path/data/'
 weblinks=['https://www.theguardian.com/world/2020/oct/06/all',
           'https://www.cnn.com/world',
           'https://www.nytimes.com/section/world',
-          'https://www.bbc.com/news/world']
+          'https://www.bbc.com/news/world',
+          'https://www.reuters.com/news/world']
 nlinks= len(weblinks)
 
 ## get names of the websites and names of saved txt files
@@ -82,8 +84,8 @@ dt='2020-10-06'
 ## Download articles and process
 from newspaper import Article
 import string
-k=0
-narticle_media=15
+k=1
+narticle_media=100
 
 ## read file one by one and download all texts
 for i in range(0,nlinks):
@@ -103,13 +105,41 @@ for i in range(0,nlinks):
    article.download()
    article.parse()
    ## save (add article number)
-   article_number=str(k).zfill(3);
    title=article.title.translate(str.maketrans('', '', string.punctuation)).lower().replace(" ", "_")
-   title_with_number= title + '-'+ article_number
+   title_with_number= title
    fout=final_outpath + title_with_number + '.txt'
    with open(fout, "w") as text_file:
    text_file.write(article.text)
    k=k+1
+
+
+## delete small files
+files = os.listdir(final_outpath)
+files_path = []
+ for file in files:
+    files_path.append(final_outpath+file)
+
+ for file in files_path:
+   if os.path.getsize(file) < 1024:
+      os.remove(file)
+
+## add number and rename to new names
+files = os.listdir(final_outpath)
+nfiles=len(files_path)
+k=1
+for file in files:
+    fn=file.split('.')[0]
+    fn1=fn +'-'+ str(k).zfill(2)+'.txt'
+    file_path_dst=final_outpath+fn1
+    file_path_src=final_outpath+file
+    os.rename(file_path_src,file_path_dst)
+    k=k+1
+
+
+
+
+
+
 
 
 
