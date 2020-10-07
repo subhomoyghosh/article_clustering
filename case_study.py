@@ -2,48 +2,34 @@
 # python3.7 -m pip install -r requirements.txt
 # python3.7 -m pip install -r bs4
 # python3.7 -m pip install -r colorama
+# python3.7 -m pip install -r htmldate
 
 import os
+from htmldate import find_date
 
 ######################################
 ## FUNCTION TO TRIM LINKS
 ######################################
 
-def trimLinks(basepath,fname,website,IsEndWithNumber,keywords):
+def trimLinks(basepath, fname, website, dt):
+    # read links
+    with open(basepath + fname) as f:
+        content = f.readlines()
+    # you may also want to remove whitespace characters like `\n` at the end of each line
+    content = [x.strip() for x in content]
 
-  # read links
-  with open(basepath+fname) as f:
-    content = f.readlines()
-  # you may also want to remove whitespace characters like `\n` at the end of each line
-  content = [x.strip() for x in content]
-
-  # does the link have date if yes=extract or keep as is
-  n= len(keywords)
-
-
-  # get only relevant links from same day!
-  links=[]
-
-  # this depnds on whether links end with number or contain the date inside
-   if isEndWithNumber==0:
+    # get only relevant links from mentioned day dt
+    links = []
     for element in content:
-      if len(set(keywords) & set(element.split('/'))) ==(n-1):
-        print(element)
-        links.append(element)
-   else:
-    for element in content:
-     # does the link end with number (for bbc)
-     m = re.search(r'\d+$', element)
-     # if the string ends in digits m will be a Match object, or None otherwise.
-      if m is not None:
-        print(element)
-        links.append(element)
+        dtcontent = find_date(element)
+        if dt == dtcontent:
+            links.append(element)
 
-     # save all relevant links in a text file
-    fout= basepath + website.split('.')[1] + '.txt'
-      with open(fout, "w") as output:
+    # save data
+    fout = basepath + website.split('.')[1] + '.txt'
+    with open(fout, "w") as output:
         for item in links:
-          output.write("%s\n" % item)
+            output.write("%s\n" % item)
 
 
 
@@ -52,7 +38,7 @@ def trimLinks(basepath,fname,website,IsEndWithNumber,keywords):
 ###### GET URL
 ######################
 
-## basepaths
+## basepath
 basepath='your_path/'
 final_outpath='your_path/data/'
 
@@ -80,18 +66,13 @@ for i in range(0,nlinks):
 ######################
 ###### TRIM URL
 ######################
+dt='2020-10-06'
 
 ## trim urls
-keywords=['https:','2020','oct','10','06']
  for i in range(0,nlinks):
    fname= txtfiles[i]
    website=websites[i]
-   if i< nlinks-1:
-     isEndWithNumber=0
-    else:
-     isEndWithNumber = 1
-   print(i)
-   trimLinks(basepath,fname,website,isEndWithNumber,keywords)
+   trimLinks(basepath,fname,website,dt)
 
 
 ######################
@@ -129,5 +110,7 @@ for i in range(0,nlinks):
    with open(fout, "w") as text_file:
    text_file.write(article.text)
    k=k+1
+
+
 
 
