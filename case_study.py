@@ -7,6 +7,7 @@
 import os
 from htmldate import find_date
 import sys
+import glob
 
 ######################################
 ## FUNCTION TO TRIM LINKS
@@ -40,7 +41,7 @@ def trimLinks(basepath, fname, website, dt):
 ######################
 
 ## basepath
-basepath='your_path/'
+basepath='your_path'
 final_outpath='your_path/data/'
 
 ## website links to get links from
@@ -106,34 +107,59 @@ for i in range(0,nlinks):
    article.parse()
    ## save (add article number)
    title=article.title.translate(str.maketrans('', '', string.punctuation)).lower().replace(" ", "_")
-   title_with_number= title
-   fout=final_outpath + title_with_number + '.txt'
+   title_titletext= title
+   fout=final_outpath + 'article-' + str(k) + '.txt'
+   fout_title= final_outpath + 'title-' + str(k) + '.txt'
    with open(fout, "w") as text_file:
    text_file.write(article.text)
+   with open(fout_title, "w") as text_file:
+   text_file.write(title_titletext)
    k=k+1
 
 
 ## delete small files
-files = os.listdir(final_outpath)
-files_path = []
- for file in files:
-    files_path.append(final_outpath+file)
+p1='your_path/data/article*'
+p2='your_path/data/title*'
+files1 = glob.glob(p1)
+files2=glob.glob(p2)
+nfl= len(files1)
 
- for file in files_path:
-   if os.path.getsize(file) < 1024:
-      os.remove(file)
+# file with paths
+files_path1 = []
+files_path2 = []
+ for i in range(0,nfl):
+    files_path1.append(files1[i])
+    files_path2.append(files2[i])
 
-## add number and rename to new names
-files = os.listdir(final_outpath)
-nfiles=len(files_path)
-k=1
-for file in files:
-    fn=file.split('.')[0]
-    fn1=fn +'-'+ str(k).zfill(2)+'.txt'
-    file_path_dst=final_outpath+fn1
-    file_path_src=final_outpath+file
-    os.rename(file_path_src,file_path_dst)
-    k=k+1
+# delete small files and titles as well
+ for i in range(0,nfl):
+   if os.path.getsize(files_path1[i]) < 1024:
+      os.remove(files_path1[i])
+      os.remove(files_path2[i])
+
+
+## again read and rename to make naming continuous
+files1 = glob.glob(p1)
+files2=glob.glob(p2)
+nfl= len(files1)
+
+for i in range(0,nfl):
+    fn1= 'article' +'-'+ str(i+1) +'.txt'
+    fn2 = 'title' + '-' + str(i+1) + '.txt'
+    file_path_src1=files1[i]
+    file_path_src2=files2[i]
+    file_path_dst1=final_outpath+ fn1
+    file_path_dst2=final_outpath+ fn2
+    os.rename(file_path_src1,file_path_dst1)
+    os.rename(file_path_src2, file_path_dst2)
+
+
+
+
+
+
+
+
 
 
 
