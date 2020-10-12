@@ -8,6 +8,8 @@ import os
 from htmldate import find_date
 import sys
 import glob
+import numpy as np
+
 
 ######################################
 ## FUNCTION TO TRIM LINKS
@@ -41,7 +43,7 @@ def trimLinks(basepath, fname, website, dt):
 ######################
 
 ## basepath
-basepath='your_path'
+basepath='your_path/'
 final_outpath='your_path/data/'
 
 ## website links to get links from
@@ -108,8 +110,8 @@ for i in range(0,nlinks):
    ## save (add article number)
    title=article.title.translate(str.maketrans('', '', string.punctuation)).lower().replace(" ", "_")
    title_titletext= title
-   fout=final_outpath + 'article-' + str(k) + '.txt'
-   fout_title= final_outpath + 'title-' + str(k) + '.txt'
+   fout=final_outpath + 'article-' + str(k).zfill(2) + '.txt'
+   fout_title= final_outpath + 'title-' + str(k).zfill(2) + '.txt'
    with open(fout, "w") as text_file:
    text_file.write(article.text)
    with open(fout_title, "w") as text_file:
@@ -122,6 +124,8 @@ p1='your_path/data/article*'
 p2='your_path/data/title*'
 files1 = glob.glob(p1)
 files2=glob.glob(p2)
+files1.sort()
+files2.sort()
 nfl= len(files1)
 
 # file with paths
@@ -141,20 +145,19 @@ files_path2 = []
 ## again read and rename to make naming continuous
 files1 = glob.glob(p1)
 files2=glob.glob(p2)
+files1.sort()
+files2.sort()
 nfl= len(files1)
 
 for i in range(0,nfl):
-    fn1= 'article' +'-'+ str(i+1) +'.txt'
-    fn2 = 'title' + '-' + str(i+1) + '.txt'
+    fn1= 'article' +'-'+ str(i+1).zfill(2) +'.txt'
+    fn2 = 'title' + '-' + str(i+1).zfill(2) + '.txt'
     file_path_src1=files1[i]
     file_path_src2=files2[i]
     file_path_dst1=final_outpath+ fn1
     file_path_dst2=final_outpath+ fn2
     os.rename(file_path_src1,file_path_dst1)
     os.rename(file_path_src2, file_path_dst2)
-
-
-
 
 
 
